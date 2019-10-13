@@ -7,7 +7,7 @@ from collections import defaultdict
 
 # set flag to start appending content,
 # example:   if readline() = <Text> activate appending and stop when readline()=</Text>
-def tokenizer(keyword,filename):
+def tokenizer_xml(keyword,filename):
     content = []
     file = open(filename)
     flag = 0
@@ -27,7 +27,7 @@ def tokenizer(keyword,filename):
             break
     #seprate paragraphs into words with  ;,\s.\[\]\(\)\'"?!
     for i in range(0,len(content)):
-        content[i] = re.split(r'[;,&%-\s.\[\]\(\)\'\/"?!]\s*',content[i])
+        content[i] = re.split(r'[;,&%-.\[\]\(\)\'\/"?!\s]\s*',content[i])# function explanation here http://www.voidcn.com/article/p-mdydvcci-bqb.html
         while '' in content[i]:
             content[i].remove('')
     return content
@@ -36,11 +36,11 @@ def tokenizer(keyword,filename):
 
 
 
-def preprocess(keyword,filename):
+def preprocess_xml(keyword,filename):
     stopwords = open('stopwords.txt','r+').read()
     ps = PorterStemmer()
     punc = string.punctuation
-    list_preprocess = tokenizer(keyword,filename)
+    list_preprocess = tokenizer_xml(keyword,filename)
     list_striped = []
     file2 = open(filename+"_preprocess.txt",'w+')
     for i in range(0,len(list_preprocess)):
@@ -59,8 +59,8 @@ def preprocess(keyword,filename):
     return list_striped
 
 def title_content_combine(filename):
-    list_headline = preprocess('HEADLINE',filename)
-    list_content = preprocess('TEXT',filename)
+    list_headline = preprocess_xml('HEADLINE',filename)
+    list_content = preprocess_xml('TEXT',filename)
     list_combine = []
     if len(list_content) == len(list_headline):
         for i in range(0,len(list_content)):
@@ -98,4 +98,4 @@ def print_indexing(dict):
         file.write('\n')
         docID = None
 
-print_indexing(indexing(title_content_combine('trec.sample.xml')))
+#print_indexing(indexing(title_content_combine('trec.sample.xml')))
