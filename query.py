@@ -63,7 +63,7 @@ def boolean_query(query):
     # stopping and stemming preprocess of query
     for i,item in enumerate(query):
         query[i] = ps.stem(item.lower())
-    print (query)
+    #print (query)
     # indicaters operations of keywords
     if 'not' in query:
         NOT = True
@@ -97,8 +97,8 @@ def boolean_query(query):
 
     #boolean query with phase_1 and phase_2
     #different situation for one terms and phase
-    print(phase_1)
-    print(phase_2)
+    #print(phase_1)
+    #print(phase_2)
     if not phase_2:
         phase1_doclist = phase_index(phase_1,distance)
         return phase1_doclist
@@ -126,7 +126,7 @@ def boolean_query(query):
 
 
 
-for i in range(0,9):
-    print (boolean_query(tokenizer_query('queries.lab2.txt')[i]))
+#for i in range(0,9):
+#    print (boolean_query(tokenizer_query('queries.lab2.txt')[i]))
 
 #indexing(title_content_combine('trec.sample.xml'))
