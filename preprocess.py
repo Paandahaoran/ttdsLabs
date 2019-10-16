@@ -98,4 +98,5 @@ def print_indexing(dict):
         file.write('\n')
         docID = None
 
+#print (len(title_content_combine('trec.sample.xml')))
 #print_indexing(indexing(title_content_combine('trec.sample.xml')))
