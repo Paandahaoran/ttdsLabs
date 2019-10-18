@@ -47,9 +47,7 @@ def df(term):
     return fren
 
 def weight_of_term(term,docID):
-    if df(term) == 0:
-        return 0
-    if tf(term,[docID]) == 0:
+    if tf(term,docID) == 0 or df(term) == 0:
         return math.log((5000/df(term)),10)
     else:
         return (1+math.log(tf(term,docID),10))*math.log((5000/df(term)),10) #N =1000
