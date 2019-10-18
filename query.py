@@ -125,8 +125,13 @@ def boolean_query(query):
 
 
 
+def run():
+    output = open("results_boolean.txt",'w+')
+    for i in range(0,10):
+        for item in sorted(boolean_query(tokenizer_query('queries.boolean.txt')[i])):
+            result = [i+1,0,item,0,1,0]
+            output.write(str(result[0]) + " " + str(result[1]) + " " + str(result[2]) + " " + str(result[3]) + " " + str(result[4]) + " " + str(result[5]))
+            output.write('\n')
 
-#for i in range(0,9):
-    #print (boolean_query(tokenizer_query('queries.lab2.txt')[i]))
-
+run()
 #indexing(title_content_combine('trec.sample.xml'))
