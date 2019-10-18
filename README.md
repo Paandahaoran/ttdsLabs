@@ -1,4 +1,4 @@
-# ttdsCW1 haoran pan    running instruction
+# main works allocation
 
 there are three main .py documents : preprocess.py , query.py and tfidf.py, each responsible for :
 
@@ -29,3 +29,6 @@ tfidf.py:
 
    tfidf.py:  change the input filename, stopwords filename and output filename with variable in line 6,7,8
    also an run() function to run the code
+
+
+## Haoran Pan  S1927548
