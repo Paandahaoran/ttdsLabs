@@ -3,8 +3,7 @@ from nltk.stem import PorterStemmer
 import preprocess
 import re
 
-
-index_map = preprocess.indexing(preprocess.title_content_combine('trec.test.xml'))
+index_map = preprocess.indexing(preprocess.title_content_combine('trec.5000.xml'))
 stopwords = open('stopwords.txt','r+').read().split()
 filename = 'queries.ranked.txt'
 
@@ -81,26 +80,17 @@ def tfidf_IDs(query):
 #str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5])
 def run():
     score_list = []
-    score = []
     turns = 0
     output = open("results_ranked.txt",'w+')
     queries = tokenizer_query(filename)
     max_size = 1000
     for i in range(0,10):
-        if i > max_size:
-            break
-        for item in tfidf_IDs(queries[i]):
-            score.clear()
-            score.append(i+1)
-            score.append(0)
-            score.append(item)
-            score.append(0)
-            score.append(tfidf_scoring(queries[i],item))
-            score.append(0)
+        for j,item in enumerate(tfidf_IDs(queries[i])):
+            if i != 0 and j > max_size:
+                break
+            score = (i+1,0,item,0,float(tfidf_scoring(queries[i],item)),0)
             score_list.append(score)
-        sorted(score_list,key=lambda x:x[4],reverse=True)
-        print(score_list)
-        for item in score_list:
+        for item in sorted(score_list,key=lambda x:x[4],reverse=True):
             output.write(str(item[0]) + " " + str(item[1]) + " " + str(item[2]) + " " + str(item[3]) + " " + str(item[4]) + " " + str(item[5]))
             output.write('\n')
         score_list.clear()
