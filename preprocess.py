@@ -1,6 +1,5 @@
 import string
 import io
-from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 import re
 from collections import defaultdict
@@ -20,63 +19,72 @@ def tokenizer_xml(keyword,filename):
             para=''
         if flag == 1:
             line = line.strip()
-            para = para + line
+            para = para + line +' '
         if line == '<'+keyword+'>\n':
             flag = 1
         if not line:
             break
     #seprate paragraphs into words with  ;,\s.\[\]\(\)\'"?!
     for i in range(0,len(content)):
-        content[i] = re.split(r'[;,&%-.\[\]\(\)\'\/"?!\s]\s*',content[i])# function explanation here http://www.voidcn.com/article/p-mdydvcci-bqb.html
+        content[i] = re.split(r'[;,&%-:=.\[\]\(\)\'\/"?!\s]\s*',content[i])# function explanation here http://www.voidcn.com/article/p-mdydvcci-bqb.html
         while '' in content[i]:
             content[i].remove('')
     return content
 
     #content[para_number][words_number_in_each_para]
 
+def tokenization_docID(filename):
+    content = []
+    r = '[^0-9]+'
+    file = open(filename)
+    while 1:
+        line = file.readline()
+        if '<DOCNO>' in line:
+            docID = re.sub(r,'',line)
+            content.append(int(docID))
+        if not line:
+            break
+    return content
+
 
 
 def preprocess_xml(keyword,filename):
-    stopwords = open('stopwords.txt','r+').read()
+    stopwords = open('stopwords.txt','r+').read().split()# huge disaster waste more than one hour without .split
     ps = PorterStemmer()
     punc = string.punctuation
     list_preprocess = tokenizer_xml(keyword,filename)
     list_striped = []
-    file2 = open(filename+"_preprocess.txt",'w+')
     for i in range(0,len(list_preprocess)):
         list_striped.append([])
-        for item in list_preprocess[i]:
-            item = ps.stem(item)            #tokenization rules  in multiple if  loops
-            if item not in stopwords:
-                if item not in punc:
-                    if not item.isdigit():# for pure numbers
-                        if item[0].islower():# for e.g. FT in the titles and some digits-start words
-                            if item[1].islower():#for case a- and a1
-                                if not len(item) == 1:# for words in that's  the s after splited by '
-                                    list_striped[i].append(item)
-                                    file2.write(item)
-                                    file2.write('\n')
+        for j,term in enumerate(list_preprocess[i]):
+            if term not in stopwords:          #tokenization rules  in multiple if  loops
+                if term not in punc:
+                    if not term.isdigit():# for pure numbers
+                        list_preprocess[i][j] = ps.stem(term)
+                        list_preprocess[i][j] = list_preprocess[i][j].lower()
+                        list_striped[i].append(list_preprocess[i][j])
     return list_striped
 
 def title_content_combine(filename):
+    list_docID = tokenization_docID(filename)
     list_headline = preprocess_xml('HEADLINE',filename)
     list_content = preprocess_xml('TEXT',filename)
-    list_combine = []
-    if len(list_content) == len(list_headline):
-        for i in range(0,len(list_content)):
-            list_combine.append(list_headline[i]+list_content[i])
+    dict_combine = defaultdict(list)
+    if len(list_content) == len(list_headline) == len(list_docID):
+        for i in range(0,len(list_docID)):
+            dict_combine[list_docID[i]] = list_headline[i]+list_content[i]
     else:
-        print ("wrong index length head:"+len(list_headline)+"content:"+len(list_content))
+        print ("wrong index length head:"+str(len(list_headline))+"content:"+str(len(list_content)) + "id" + str(len(list_docID)))
+    #print(dict_combine)
+    return dict_combine
 
-    return list_combine
 
 
-
-def indexing(file_list):
+def indexing(file_dict):
     dict = defaultdict(list) #defaultdict() example here https://python3-cookbook.readthedocs.io/zh_CN/latest/c01/p06_map_keys_to_multiple_values_in_dict.html
-    for doc in range(0,len(file_list)):
-        for terms in range(0,len(file_list[doc])):
-            dict[file_list[doc][terms]].append((doc,terms))
+    for docID in sorted(file_dict.keys()):
+        for i in range(0,len(file_dict[docID])):
+            dict[file_dict[docID][i]].append((docID,i))
     return dict
 
 
@@ -87,7 +95,7 @@ def print_indexing(dict):
     sorted(dict.keys())
     for key in sorted(dict.keys()):
         file.write(key)
-        for doc in dict[key]:
+        for doc in sorted(dict[key]):
             if not (doc[0] == docID):
                 file.write('\n\t')
                 file.write(str(doc[0]))
@@ -98,5 +106,4 @@ def print_indexing(dict):
         file.write('\n')
         docID = None
 
-#print (len(title_content_combine('trec.sample.xml')))
-#print_indexing(indexing(title_content_combine('trec.sample.xml')))
+#print_indexing(indexing(title_content_combine('trec.5000.xml')))
