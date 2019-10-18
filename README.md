@@ -19,6 +19,8 @@ tfidf.py:
 
 
 #way to run:
+
+
    preprocess.py:  One line run() function in the bottom of the file. Input the filename to workwith in this function.
 
 
