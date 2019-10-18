@@ -4,8 +4,8 @@ from nltk.stem import PorterStemmer
 import re
 import preprocess
 from collections import defaultdict
-stopwords = open('stopwords.txt','r+').read()
-index_map = preprocess.indexing(preprocess.title_content_combine('trec.sample.xml'))
+stopwords = open('stopwords.txt','r+').read().split()
+index_map = preprocess.indexing(preprocess.title_content_combine('trec.5000.xml'))
 
 
 def tokenizer_query(filename):
@@ -16,7 +16,7 @@ def tokenizer_query(filename):
         query = file.readline()
         if not query or query == '':
             break
-        queries.append(query.strip())
+        queries.append(query.strip().lower())
     #seprate paragraphs into words with  ;,\s.\[\]\(\)\'"?!
     for i in range(0,len(queries)):
         queries[i] = re.split(r'[;,&%-.\[\]\(\)\'\/"?!\s]\s*',queries[i])# function explanation here http://www.voidcn.com/article/p-mdydvcci-bqb.html
@@ -115,7 +115,7 @@ def boolean_query(query):
                 return "error"
         else:
             if AND:
-                return phase1_doclist- phase2_doclist
+                return phase1_doclist - phase2_doclist
             if OR:
                 return phase1_doclist ^ phase2_doclist
             else:
@@ -127,6 +127,6 @@ def boolean_query(query):
 
 
 #for i in range(0,9):
-#    print (boolean_query(tokenizer_query('queries.lab2.txt')[i]))
+    #print (boolean_query(tokenizer_query('queries.lab2.txt')[i]))
 
 #indexing(title_content_combine('trec.sample.xml'))
